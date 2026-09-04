@@ -473,9 +473,9 @@ func (f *Fs) ftpConnection(ctx context.Context) (c *ftp.ServerConn, err error) {
 			}
 			dialAddress := net.JoinHostPort(f.opt.Host, dialPort)
 			if f.opt.SocksProxy != "" {
-				conn, err = proxy.SOCKS5Dial(network, dialAddress, f.opt.SocksProxy, baseDialer)
+				conn, err = proxy.SOCKS5Dial(ctx, network, dialAddress, f.opt.SocksProxy, baseDialer)
 			} else {
-				conn, err = proxy.HTTPConnectDial(network, dialAddress, f.proxyURL, baseDialer)
+				conn, err = proxy.HTTPConnectDial(ctx, network, dialAddress, f.proxyURL, baseDialer)
 			}
 		} else {
 			conn, err = baseDialer.Dial(network, address)

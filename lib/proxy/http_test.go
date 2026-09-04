@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"bufio"
+	"context"
 	"net"
 	"net/url"
 	"strings"
@@ -54,7 +55,7 @@ func TestHTTPConnectDial(t *testing.T) {
 		}
 		_, _ = conn.Write(buf)
 	})
-	conn, err := HTTPConnectDial("tcp", "example.com:1234", proxyURL, nil)
+	conn, err := HTTPConnectDial(context.Background(), "tcp", "example.com:1234", proxyURL, nil)
 	require.NoError(t, err)
 	defer func() {
 		_ = conn.Close()
@@ -75,7 +76,7 @@ func TestHTTPConnectDialBuffered(t *testing.T) {
 		// a single write so they arrive in one read.
 		_, _ = conn.Write([]byte("HTTP/1.1 200 Connection established\r\n\r\nSSH-2.0-banner\r\n"))
 	})
-	conn, err := HTTPConnectDial("tcp", "example.com:1234", proxyURL, nil)
+	conn, err := HTTPConnectDial(context.Background(), "tcp", "example.com:1234", proxyURL, nil)
 	require.NoError(t, err)
 	defer func() {
 		_ = conn.Close()
@@ -103,7 +104,7 @@ func TestHTTPConnectDialTooLarge(t *testing.T) {
 			}
 		}
 	})
-	conn, err := HTTPConnectDial("tcp", "example.com:1234", proxyURL, nil)
+	conn, err := HTTPConnectDial(context.Background(), "tcp", "example.com:1234", proxyURL, nil)
 	require.Error(t, err)
 	assert.Nil(t, conn)
 	assert.Contains(t, err.Error(), "too large")
@@ -113,7 +114,7 @@ func TestHTTPConnectDialNon200(t *testing.T) {
 	proxyURL := startProxy(t, func(conn net.Conn) {
 		_, _ = conn.Write([]byte("HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\n\r\n"))
 	})
-	conn, err := HTTPConnectDial("tcp", "example.com:1234", proxyURL, nil)
+	conn, err := HTTPConnectDial(context.Background(), "tcp", "example.com:1234", proxyURL, nil)
 	require.Error(t, err)
 	assert.Nil(t, conn)
 	assert.Contains(t, err.Error(), "403")

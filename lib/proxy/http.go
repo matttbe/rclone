@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"bufio"
+	"context"
 	"crypto/tls"
 	"encoding/base64"
 	"fmt"
@@ -11,6 +12,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/rclone/rclone/fs/fshttp"
 	"golang.org/x/net/proxy"
 )
 
@@ -40,10 +42,10 @@ func (c *bufferedConn) Read(p []byte) (n int, err error) {
 // standard way.
 //
 // It optionally takes a proxyDialer to dial the HTTP proxy server.
-// If nil is passed, it will use the default net.Dialer.
-func HTTPConnectDial(network, addr string, proxyURL *url.URL, proxyDialer proxy.Dialer) (net.Conn, error) {
+// If nil is passed, it will use the default fshttp.Dialer.
+func HTTPConnectDial(ctx context.Context, network, addr string, proxyURL *url.URL, proxyDialer proxy.Dialer) (net.Conn, error) {
 	if proxyDialer == nil {
-		proxyDialer = &net.Dialer{}
+		proxyDialer = fshttp.NewDialer(ctx)
 	}
 	if proxyURL == nil {
 		return proxyDialer.Dial(network, addr)
