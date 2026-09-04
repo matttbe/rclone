@@ -566,6 +566,11 @@ var ConfigOptionsInfo = Options{{
 	Default: "",
 	Help:    "HTTP proxy URL.",
 	Groups:  "Networking",
+}, {
+	Name:    "mptcp",
+	Default: false,
+	Help:    "Use Multipath TCP (Linux only, transparently falls back to TCP).",
+	Groups:  "Networking",
 }}
 
 // ConfigInfo is filesystem config options
@@ -680,6 +685,7 @@ type ConfigInfo struct {
 	MaxConnections             int               `config:"max_connections"`
 	NameTransform              []string          `config:"name_transform"`
 	HTTPProxy                  string            `config:"http_proxy"`
+	MultiPathTCP               bool              `config:"mptcp"`
 }
 
 func init() {

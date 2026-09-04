@@ -36,6 +36,9 @@ func NewDialer(ctx context.Context) *Dialer {
 	if ci.BindAddr != nil {
 		dialer.Dialer.LocalAddr = &net.TCPAddr{IP: ci.BindAddr}
 	}
+	if ci.MultiPathTCP {
+		dialer.Dialer.SetMultipathTCP(true)
+	}
 	return dialer
 }
 
