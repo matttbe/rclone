@@ -2199,6 +2199,32 @@ if you are reading and writing to an OS X filing system this will be
 
 This command line flag allows you to override that computed default.
 
+### --mptcp
+
+Use Multipath TCP for outgoing connections. This option is Linux-only; on
+other platforms, or when Multipath TCP is unavailable, connections
+transparently fall back to regular TCP.
+
+Multipath TCP can improve performance when there are multiple possible paths
+between the client and server. It may not be a win when there is only one
+possible path and the client does not switch to another IP during the
+transfer, or when the server does not support Multipath TCP. In the former
+case, the overhead is expected to be small (about 1%) and should normally be
+outweighed by the possibility of using multiple paths. In the latter case,
+the overhead should not be measurable, although the kernel does a little more
+processing to pass traffic from the Multipath TCP stack to the TCP stack.
+
+This option applies to connections made by rclone's own networking code.
+Third-party SDKs that create their own network transport will not pick it up.
+For those SDKs, use [`mptcpize run`](https://www.mptcp.dev/setup.html#force-applications-to-use-mptcp)
+or another technique described in the [MPTCP application setup
+documentation](https://www.mptcp.dev/setup.html#force-applications-to-use-mptcp).
+
+When used with `--bind`, the bound local IP restricts the connection to that
+address, so subflows cannot use other interfaces. When used with `--dscp`,
+rclone sets the TOS/traffic class after dialing the connection. TODO: Matth:
+validate this.
+
 ### --multi-thread-write-buffer-size SizeSuffix
 
 When transferring with multiple threads, rclone will buffer the specified
